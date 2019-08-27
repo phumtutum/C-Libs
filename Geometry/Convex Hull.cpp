@@ -45,7 +45,7 @@ bool ccw(pt p1 , pt p2 , pt p3)
     return cp(p1,p2,p3) > 0;
 }
 
-
+//CONVEX HULL IN CLOCKWISE ORDER
 vector<pt> convex_Hull_Builder(vector<pt> pn)
 {
     sort(pn.begin() , pn.end() , cmp);
