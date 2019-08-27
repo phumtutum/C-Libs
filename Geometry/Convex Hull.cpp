@@ -7,6 +7,7 @@
 #include<cstring>
 #include<map>
 #include<iomanip>
+#include<cmath>
 
 #define ll long long
 #define pb(x) push_back(x)
@@ -14,6 +15,7 @@
 using namespace std;
 
 typedef pair<int,int> ii;
+const double PI = 2*acos(0.0);
 
 struct pt
 {
