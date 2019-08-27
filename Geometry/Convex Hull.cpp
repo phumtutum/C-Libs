@@ -20,9 +20,6 @@ struct pt
     double x,y;
 };
 
-const int NMAX = 10005;
-
-
 bool cmp(const pt &p1 , const pt &p2)
 {
     if(p1.x == p2.x)
@@ -102,7 +99,37 @@ vector<pt> convex_Hull_Builder(vector<pt> pn)
     return rez;
 }
 
-int main()
+bool point_in_triangle(pt p1 , pt p2 , pt p3 , pt p)
 {
+    double rez1 = cp(p1,p2,p3);
+    double rez2 = fabs(cp(p , p1 , p2)) + fabs(cp(p , p2 , p3)) + fabs(cp(p , p3 , p1));
+    return rez1 == rez2;
+}
 
+bool point_in_convex_polygon(pt p , vector<pt> v)
+{
+    if(v.size() < 3)
+        return 0;
+
+    if(!ccw(v[0] , v[1] , p))
+    {
+        if(cw(v[0] , v[1] , p))
+            return 0;
+        else
+            return 1;
+    }
+    int i,step = 1;
+
+    for(step = 1 ; step < v.size() - 2 ; step<<=1);
+
+    for(i = 1 ; step ; step>>=1)
+    {
+        if(i+step < v.size()-1 && !cw(v[0] , v[i+step] , p))
+            i += step;
+    }
+
+    if(ccw(v[0] , v[i+1] , p))
+        return 0;
+
+    return point_in_triangle(v[0] , v[i] , v[i+1] , p);
 }
