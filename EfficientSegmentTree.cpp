@@ -27,7 +27,7 @@ void buildTree()
 void updateTree(int pos , int val)
 {
     int i;
-    for(i = pos + N-1 , arb[i] = val; pos > 1 ; pos>>=1)
+    for(arb[pos += N-1] = val; pos > 1 ; pos>>=1)
         arb[i>>1] = arb[i] + arb[i^1];
 }
 
