@@ -16,12 +16,12 @@ using namespace std;
 const int NMAX = 0;
 
 vector<int> sort_cyclic_shifts(string const& s) {
-    //INITIALIZARE
+    //INIT
     int n = s.size();
     const int alphabet = 256;
     vector<int> p(n), c(n), cnt(max(alphabet, n), 0);
 
-    //PRIMA ITERATIE
+    //1st
     for (int i = 0; i < n; i++)
         cnt[s[i]]++;
     for (int i = 1; i < alphabet; i++)
@@ -36,7 +36,7 @@ vector<int> sort_cyclic_shifts(string const& s) {
         c[p[i]] = classes - 1;
     }
 
-    //RESTUL ITERATIILOR
+    //rest
     vector<int> pn(n), cn(n);
     for (int h = 0; (1 << h) < n; ++h) {
         for (int i = 0; i < n; i++) {
