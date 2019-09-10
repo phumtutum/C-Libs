@@ -1,5 +1,5 @@
 //check check check
-//#include<iostream>
+#include<iostream>
 #include<vector>
 #include<algorithm>
 #include<fstream>
@@ -17,8 +17,6 @@ typedef pair<int,int> ii;
 
 const int NMAX = 10005;
 
-ifstream cin("cuplaj.in");
-ofstream cout("cuplaj.out");
 
 int l[NMAX],r[NMAX],N,M,E;
 bool viz[NMAX];
