@@ -1,78 +1,91 @@
-//check check
-//UNTESTED
-//code from : https://cp-algorithms.com/string/suffix-array.html
+//check check check
+// O(N logN logN) - without radix
+// Tested
 #include<iostream>
 #include<vector>
 #include<algorithm>
 #include<fstream>
 #include<queue>
 #include<cstring>
+#include<map>
+#include<iomanip>
+#include<set>
 
 #define ll long long
 #define pb(x) push_back(x)
 
 using namespace std;
 
-const int NMAX = 0;
+typedef pair<int,int> ii;
 
-vector<int> sort_cyclic_shifts(string const& s) {
-    //INIT
-    int n = s.size();
-    const int alphabet = 256;
-    vector<int> p(n), c(n), cnt(max(alphabet, n), 0);
+const int NMAX = 1e5+5;
 
-    //1st
-    for (int i = 0; i < n; i++)
-        cnt[s[i]]++;
-    for (int i = 1; i < alphabet; i++)
-        cnt[i] += cnt[i-1];
-    for (int i = 0; i < n; i++)
-        p[--cnt[s[i]]] = i;
-    c[p[0]] = 0;
-    int classes = 1;
-    for (int i = 1; i < n; i++) {
-        if (s[p[i]] != s[p[i-1]])
-            classes++;
-        c[p[i]] = classes - 1;
-    }
+struct suffix {
+    int indx;
+    int rk[2];
+};
 
-    //rest
-    vector<int> pn(n), cn(n);
-    for (int h = 0; (1 << h) < n; ++h) {
-        for (int i = 0; i < n; i++) {
-            pn[i] = p[i] - (1 << h);
-            if (pn[i] < 0)
-                pn[i] += n;
-        }
-        fill(cnt.begin(), cnt.begin() + classes, 0);
-        for (int i = 0; i < n; i++)
-            cnt[c[pn[i]]]++;
-        for (int i = 1; i < classes; i++)
-            cnt[i] += cnt[i-1];
-        for (int i = n-1; i >= 0; i--)
-            p[--cnt[c[pn[i]]]] = pn[i];
-        cn[p[0]] = 0;
-        classes = 1;
-        for (int i = 1; i < n; i++) {
-            pair<int, int> cur = {c[p[i]], c[(p[i] + (1 << h)) % n]};
-            pair<int, int> prev = {c[p[i-1]], c[(p[i-1] + (1 << h)) % n]};
-            if (cur != prev)
-                ++classes;
-            cn[p[i]] = classes - 1;
-        }
-        c.swap(cn);
-    }
-    return p;
+bool cmp(const suffix &p1, const suffix &p2) {
+    if(p1.rk[0] == p2.rk[0])
+        return p1.rk[1] < p2.rk[1];
+    return p1.rk[0] < p2.rk[0];
 }
 
-vector<int> suffix_array_construction(string s) {
-    s += "$";
-    vector<int> sorted_shifts = sort_cyclic_shifts(s);
-    sorted_shifts.erase(sorted_shifts.begin());
-    return sorted_shifts;
-}
+int suff_array[NMAX];
 
+void create_suffix_array(string s){
+    int i,j,N = s.size();
+
+    suffix arr[N];
+    int ind[N],k;
+
+    // initialize
+    for(i = 0 ; i < N ; ++i) {
+        arr[i].indx = i;
+        arr[i].rk[0] = s[i] - 'a';
+        arr[i].rk[1] = (i+1 < s.size()) ? (s[i+1] - 'a') : -1;
+    }
+
+    sort(arr, arr+N, cmp);
+
+    for(k = 4 ; k < (N<<1) ; k <<=1) {
+        // compute rank 0 for each
+        int prev_rank = arr[0].rk[0];
+        arr[0].rk[0] = 0;
+        ind[arr[0].indx] = 0;
+        for(i = 1 ; i < N ; ++i) {
+            if(prev_rank == arr[i].rk[0] && arr[i-1].rk[1] == arr[i].rk[1])
+                arr[i].rk[0] = arr[i-1].rk[0];
+            else {
+                prev_rank = arr[i].rk[0];
+                arr[i].rk[0] = arr[i-1].rk[0] + 1;
+            }
+            ind[arr[i].indx] = i;
+        }
+
+        for(i = 0 ; i < N ; ++i) {
+            int nextIndex = arr[i].indx + (k>>1);
+            arr[i].rk[1] = (nextIndex < N) ? arr[ind[nextIndex]].rk[0] : -1;
+        }
+
+        sort(arr, arr+N, cmp);
+    }
+
+    for(i = 0 ; i < N ; ++i)
+        suff_array[i] = arr[i].indx;
+}
 
 int main()
 {
+    string s;
+
+    cin>>s;
+    create_suffix_array(s);
+
+    int i, N = s.size();
+
+    for(i = 0 ; i < N ; ++i)
+        cout<<suff_array[i]<<"\n";
+
+    return 0;
 }
